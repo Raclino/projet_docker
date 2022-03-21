@@ -1,0 +1,47 @@
+version: '3.1'
+
+services:
+  my_react:
+    container_name: my_react_container
+    build: my_react
+    ports:
+      - "8080:80"
+    networks: 
+      - frontend
+
+  my_sql:
+    container_name: my_sql_container
+    build: my_sql
+    volumes:
+        - my_sql_volume:/var/lib/mysql
+    ports: 
+        - "3306:3306"
+    networks: 
+      - backend
+
+  php_server:
+    container_name: my_php_server
+    build: php_server
+    ports:
+      - "7777:80"
+    networks: 
+      - backend
+      - frontend
+
+  laravel:
+    container_name: laravel_container
+    build: laravel
+    command: "php artisan serve --host=0.0.0.0 --port=80"
+    ports: 
+      - "7778:80"
+    networks: 
+      - backend
+    depends_on:
+      - my_sql
+
+volumes:
+    my_sql_volume:
+
+networks: 
+    backend:
+    frontend:
